@@ -13,27 +13,38 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddToggle({
-	Name = "AutoFarm",
+	Name = "AutoFarm noobs",
+	Default = false,
+	Callback = function(Value)
+		Tab:AddToggle({
+	Name = "Auto Farm Noobs",
 	Default = false,
 	Callback = function(Value)
 		_G.AutoFarm = Value
-		print("AutoFarm is now: ", Value)
+		print("AutoFarm is now:", Value)
 
-		while _G.AutoFarm do 
+		while _G.AutoFarm do
 			wait()
 			pcall(function()
-				for i, v in pairs(game:GetService("Workspace").Living:GetDescendants()) do
-					if v.Name == "Dummy" then
-						if v.Humanoid.Health > 0 then
-							repeat task.wait()
-								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-							until _G.AutoFarm == false or v.Humanoid.Health <= 0
+				for _, v in pairs(game:GetService("Workspace").Living:GetDescendants()) do
+					if v:IsA("Model") and v.Name == "Noobs" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+						local humanoid = v.Humanoid
+						local hrp = v.HumanoidRootPart
+
+						if humanoid.Health > 0 then
+							repeat
+								task.wait()
+								-- ย้ายตัวละครไปอยู่ด้านบนหัวมอนและหันลง
+								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = 
+									hrp.CFrame * CFrame.new(0, 5, 0) * CFrame.Angles(math.rad(90), 0, 0)
+							until not _G.AutoFarm or humanoid.Health <= 0
 						end
 					end
 				end
 			end)
 		end
 	end    
+})
 })
 
 _G.AutoClick = false -- ตัวแปรสำหรับเปิด/ปิดออโต้คลิก
