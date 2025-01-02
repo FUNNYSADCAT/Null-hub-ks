@@ -22,7 +22,7 @@ Tab:AddToggle({
         while _G.AutoFarm do
             wait()
             pcall(function()
-                for _, v in pairs(game:GetService("Workspace").Living:GetDescendants()) do
+                for _, v in pairs(game:GetService("Workspace").Noobs:GetDescendants()) do
                     if v:IsA("Model") and v.Name == "Noobs" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
                         local humanoid = v.Humanoid
                         local hrp = v.HumanoidRootPart
