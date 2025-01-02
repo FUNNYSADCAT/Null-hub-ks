@@ -12,35 +12,33 @@ local Section = Tab:AddSection({
 	Name = "Farm(beta)"
 })
 
+_G.AutoFarm = false
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
 Tab:AddToggle({
-    Name = "Auto Farm Noobs",
+    Name = "AutoFarm",
     Default = false,
     Callback = function(Value)
         _G.AutoFarm = Value
-        print("AutoFarm is now:", Value)
-
-        while _G.AutoFarm do
-            wait()
-            pcall(function()
-                for _, v in pairs(game:GetService("Workspace").NPC.Noobs:GetDescendants()) do
-                    if v:IsA("Model") and v.Name == "Noobs" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+        if _G.AutoFarm then
+            while _G.AutoFarm do
+                for _, v in pairs(game:GetService("Workspace").NPC.Noobs:GetChildren()) do
+                    if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
                         local humanoid = v.Humanoid
-                        local hrp = v.HumanoidRootPart
+                        local rootPart = v.HumanoidRootPart
 
                         if humanoid.Health > 0 then
                             repeat
                                 task.wait()
-                                -- ตรวจสอบการเข้าถึง HumanoidRootPart และคำนวณตำแหน่งใหม่
-                                if hrp then
-                                    local direction = hrp.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position
-                                    -- ทำให้ตัวละครหันไปทางมอนสเตอร์
-                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(hrp.Position + Vector3.new(0, 5, 0), hrp.Position)
-                                end
+                                character.HumanoidRootPart.CFrame = rootPart.CFrame * CFrame.new(0, 0, 3)
                             until not _G.AutoFarm or humanoid.Health <= 0
                         end
                     end
                 end
-            end)
+                task.wait(0.1) -- เพิ่มเวลาเพื่อป้องกันโหลดหนักเกินไป
+            end
         end
     end    
 })
