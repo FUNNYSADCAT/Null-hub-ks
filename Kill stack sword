@@ -35,3 +35,24 @@ Tab:AddToggle({
 		end
 	end    
 })
+
+_G.AutoClick = false -- ตัวแปรสำหรับเปิด/ปิดออโต้คลิก
+
+Tab:AddToggle({
+	Name = "Auto attack(beta)",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoClick = Value
+		print("AutoClick is now: ", Value)
+
+		while _G.AutoClick do
+			wait(0.1) -- ตั้งค่าเวลาหน่วงระหว่างคลิก
+			pcall(function()
+				local VirtualInputManager = game:GetService("VirtualInputManager")
+				VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- MouseButton1Down
+				wait(0.05) -- เวลาหน่วงก่อนปล่อยคลิก
+				VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- MouseButton1Up
+			end)
+		end
+	end
+})
