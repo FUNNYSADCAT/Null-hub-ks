@@ -1,0 +1,57 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Title of the library", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local autoFarmEnabled = false -- สถานะเปิด/ปิด Auto Farm
+
+local function autoFarmToggle(tab, toggleName)
+    tab:AddToggle({
+        Name = auto farm players,
+        Default = false,
+        Callback = function(value)
+            autoFarmEnabled = value
+            if autoFarmEnabled then
+                print("Auto Farm เปิด")
+            else
+                print("Auto Farm ปิด")
+            end
+        end
+    })
+
+    -- ฟังก์ชันหาผู้เล่นที่อยู่ใกล้ที่สุด
+    local function findClosestPlayer()
+        local closestPlayer = nil
+        local shortestDistance = math.huge
+
+        for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+            if otherPlayer ~= game.Players.LocalPlayer and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
+                local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
+
+                if distance < shortestDistance then
+                    closestPlayer = otherPlayer
+                    shortestDistance = distance
+                end
+            end
+        end
+
+        return closestPlayer
+    end
+
+    -- เริ่ม Loop Auto Farm
+    spawn(function()
+        while wait(0.1) do
+            if autoFarmEnabled then
+                local target = findClosestPlayer()
+
+                if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                    -- เคลื่อนที่ไปหาเป้าหมาย
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(target.Character.HumanoidRootPart.Position)
+                end
+            end
+        end
+    end)
+end
+
+-- เรียกใช้ฟังก์ชัน
+autoFarmToggle(Tab, "Auto Farm คน")
