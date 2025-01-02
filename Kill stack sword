@@ -12,37 +12,53 @@ local Section = Tab:AddSection({
 	Name = "Farm(beta)"
 })
 
-_G.AutoFarm = false
+_G.AutoFarm = false -- เริ่มต้นปิด AutoFarm
 
 local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+local function getCharacter()
+    return player.Character or player.CharacterAdded:Wait()
+end
 
+local function autofarm()
+    while _G.AutoFarm do
+        local character = getCharacter()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+        for _, v in pairs(game:GetService("Workspace").NPC.Noobs:GetChildren()) do
+            if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
+                local humanoid = v.Humanoid
+                local rootPart = v.HumanoidRootPart
+
+                if humanoid.Health > 0 then
+                    repeat
+                        task.wait()
+                        humanoidRootPart.CFrame = rootPart.CFrame * CFrame.new(0, 0, 3)
+                    until not _G.AutoFarm or humanoid.Health <= 0
+                end
+            end
+        end
+        task.wait(0.1) -- ลดการโหลดหนัก
+    end
+end
+
+-- เริ่ม AutoFarm เมื่อเปิด Toggle
+player.CharacterAdded:Connect(function()
+    if _G.AutoFarm then
+        task.spawn(autofarm)
+    end
+end)
+
+-- เพิ่ม Callback function สำหรับ Toggle
 Tab:AddToggle({
-    Name = "AutoFarm",
+    Name = "AutoFarm Toggle",
     Default = false,
     Callback = function(Value)
         _G.AutoFarm = Value
-        if _G.AutoFarm then
-            while _G.AutoFarm do
-                for _, v in pairs(game:GetService("Workspace").NPC.Noobs:GetChildren()) do
-                    if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
-                        local humanoid = v.Humanoid
-                        local rootPart = v.HumanoidRootPart
-
-                        if humanoid.Health > 0 then
-                            repeat
-                                task.wait()
-                                character.HumanoidRootPart.CFrame = rootPart.CFrame * CFrame.new(0, 0, 3)
-                            until not _G.AutoFarm or humanoid.Health <= 0
-                        end
-                    end
-                end
-                task.wait(0.1) -- เพิ่มเวลาเพื่อป้องกันโหลดหนักเกินไป
-            end
+        if Value then
+            task.spawn(autofarm) -- เริ่มฟาร์มเมื่อเปิด Toggle
         end
-    end    
+    end
 })
-
 
 _G.AutoClick = false -- ตัวแปรสำหรับเปิด/ปิดออโต้คลิก
 
