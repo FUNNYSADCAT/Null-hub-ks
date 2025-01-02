@@ -12,7 +12,7 @@ local Section = Tab:AddSection({
 	Name = "Farm(beta)"
 })
 
-tab:AddToggle({
+Tab:AddToggle({
     Name = "Auto Farm คน",
     Default = false,
     Callback = function(value)
