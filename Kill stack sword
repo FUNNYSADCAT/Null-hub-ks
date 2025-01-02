@@ -1,6 +1,6 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "K", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({Name = "KillstreakSwordsV4", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
 local Tab = Window:MakeTab({
 	Name = "main",
@@ -13,51 +13,25 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddToggle({
-    Name = "Auto Farm คน",
-    Default = false,
-    Callback = function(value)
-        local autoFarmEnabled = value -- ใช้ตัวแปรในนี้เพื่อเปิด/ปิด Auto Farm
+	Name = "AutoFarm",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoFarm = Value
+		print("AutoFarm is now: ", Value)
 
-        -- ฟังก์ชันหาผู้เล่นที่อยู่ใกล้ที่สุด
-        local function findClosestPlayer()
-            local closestPlayer = nil
-            local shortestDistance = math.huge
-
-            for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-                if otherPlayer ~= game.Players.LocalPlayer and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
-                    local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
-
-                    if distance < shortestDistance then
-                        closestPlayer = otherPlayer
-                        shortestDistance = distance
-                    end
-                end
-            end
-
-            return closestPlayer
-        end
-
-        -- ฟังก์ชันเคลื่อนที่ไปหาเป้าหมาย
-        local function moveToTarget(target)
-            if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-                local targetHumanoidRootPart = target.Character.HumanoidRootPart
-                if targetHumanoidRootPart then
-                    -- เคลื่อนที่ไปหาตำแหน่งของ HumanoidRootPart
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetHumanoidRootPart.Position)
-                end
-            end
-        end
-
-        -- Loop สำหรับ Auto Farm
-        spawn(function()
-            while wait(0.1) do
-                if autoFarmEnabled then
-                    local target = findClosestPlayer()
-                    moveToTarget(target)
-                end
-            end
-        end)
-    end
+		while _G.AutoFarm do 
+			wait()
+			pcall(function()
+				for i, v in pairs(game:GetService("Workspace").Living:GetDescendants()) do
+					if v.Name == "Dummy" then
+						if v.Humanoid.Health > 0 then
+							repeat task.wait()
+								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+							until _G.AutoFarm == false or v.Humanoid.Health <= 0
+						end
+					end
+				end
+			end)
+		end
+	end    
 })
-
