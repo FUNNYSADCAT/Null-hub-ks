@@ -13,10 +13,6 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddToggle({
-	Name = "AutoFarm noobs",
-	Default = false,
-	Callback = function(Value)
-		Tab:AddToggle({
 	Name = "Auto Farm Noobs",
 	Default = false,
 	Callback = function(Value)
@@ -44,7 +40,6 @@ Tab:AddToggle({
 			end)
 		end
 	end    
-})
 })
 
 _G.AutoClick = false -- ตัวแปรสำหรับเปิด/ปิดออโต้คลิก
