@@ -2,6 +2,16 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 local Window = OrionLib:MakeWindow({Name = "Title of the library", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
+local Tab = Window:MakeTab({
+	Name = "main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Farm(beta)"
+})
+
 local autoFarmEnabled = false -- สถานะเปิด/ปิด Auto Farm
 
 local function autoFarmToggle(tab, toggleName)
